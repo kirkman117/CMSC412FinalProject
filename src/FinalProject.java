@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class FinalProject {
     public static void main(String[] args) {
         BufferedReader object = new BufferedReader(new InputStreamReader(System.in));
-        int frames = 4;
+        int physicalFrames = 4;
         String results[];
         StringBuffer parsedPages = new StringBuffer();
         int pages[] = {1, 7, 5, 4, 0, 1, 4, 7, 3, 6, 5, 0, 4, 7, 3, 2, 1};
@@ -61,10 +61,8 @@ public class FinalProject {
                         continue;
                     case 4:
                         if(parsedPages.length() != 0){
-                            results = FIFO(parsedPages,parsedPages.length(), frames);
-                            System.out.println("FIFO Simulation complete \n"
-                                    + "FIFO Page faults: " + results[0] + "\n"
-                                    + "FIFO Victim Frames: " + results[1] + "\n");
+                            FIFO(parsedPages,parsedPages.length(),physicalFrames);
+                            System.out.println("FIFO Simulation complete \n");
                         }else {
                             System.out.println("Please enter a reference string via option 1 or 2.");
                         }
@@ -72,7 +70,7 @@ public class FinalProject {
                         continue;
                     case 5:
                         if(parsedPages.length() != 0){
-                            results = OPT(pages, pages.length, frames);
+                            results = OPT(pages, pages.length, physicalFrames);
                             System.out.println("OPT Page faults: " + results[0]);
                             System.out.println("OPT Victim Frames: " + results[1]);
                         }else {
@@ -81,7 +79,7 @@ public class FinalProject {
                         continue;
                     case 6:
                         if(parsedPages.length() != 0){
-                            results = LRU(pages, pages.length, frames);
+                            results = LRU(pages, pages.length, physicalFrames);
                             System.out.println("LRU Page faults: " + results[0]);
                             System.out.println("LRU Victim Frames: " + results[1]);
                         }else {
@@ -90,7 +88,7 @@ public class FinalProject {
                         continue;
                     case 7:
                         if(parsedPages.length() != 0){
-                            results = LFU(pages, pages.length, frames);
+                            results = LFU(pages, pages.length, physicalFrames);
                             System.out.println("LFU Page faults: " + results[0]);
                             System.out.println("LFU Victim Frames: " + results[1]);
                         }else {
@@ -115,8 +113,8 @@ public class FinalProject {
     }
     private static void  printReferenceString(StringBuffer parsedPages){
         for (int i = 0; i < parsedPages.length(); i++) {
-            if(i ==parsedPages.length() - 1){
-                System.out.print(parsedPages.charAt(i) + "\n");
+            if(i == parsedPages.length() - 1){
+                System.out.print(parsedPages.charAt(i) + "\n\n");
 
             }else
                 System.out.print(parsedPages.charAt(i)+ ", ");
@@ -177,51 +175,96 @@ public class FinalProject {
         }
         return  isContinuing;
     }
+    private static void printSummary(int capacity, StringBuffer frames, String type) {
+        switch (type){
+            case "FIFO":
+                System.out.println("\nIn the FIFO page-replacement algorithm, the victim frame is the oldest frame. \n"
+                        + "The simulation of the FIFO page-replacement algorithm assumes a hypothetical computer having " + capacity + "\n"
+                        + "physical frames numbered 0 to " + (capacity - 1) +", which form a FIFO queue.  It assumes that the sing process that is \n"
+                        + "running has a virtual memory of 10 frames numbered 0 to 9.  The reference string is:\n");
+                break;
+        }
 
-    private static String[] FIFO(StringBuffer pages, int pageLength, int capacity) {
-        String result[] = new String[2];
+        printReferenceString(frames);
+    }
+    private static void printSummary(boolean fault, String frame,String victim, int capacity, String type, int frameLocation){
+        switch (type){
+            case "FIFO":
+                if(fault && !victim.equals("")){
+                    System.out.println("\nVirtual frame "+ frame+ " is referenced. \n"
+                            + "Because virtual frame "+ frame +" is not present in physical memory, a page fault is generated.\n"
+                            + "Because there is no more room in the physical memory, a frame must be replaced.\n"
+                            + "The victim frame is virtual frame " +victim +", according to the FIFO strategy used in this algorithm \n"
+                            + "Virtual frame "+victim + " is swapped out, and virtual frame "+ frame +" is swapped in.\n");
+                }else if(fault){
+                    System.out.println("\nVirtual frame "+ frame+ " is referenced. \n"
+                            + "Because virtual frame "+ frame +" is not present in physical memory, a page fault is generated.\n"
+                            + "Virtual frame "+ frame+" is loaded into the FIFO queue formed by the physical frames 0 to "+(capacity - 1) +".\n"
+                            + "Because there was room in the physical memory, we have no victim frame.\n");
+                }else {
+                    System.out.println("\nVirtual frame "+ frame+ " is referenced. \n"
+                            + "Because virtual frame "+ frame +" is already present in the physical memory, in physical frame "+frameLocation+", \n"
+                            + "nothing else needs to be done.\n"
+                            + "No page fault is generated. \nWe have no victim frame.\n");
+                }
+                break;
+        }
+
+    }
+    private static void FIFO(StringBuffer pages, int pageLength, int capacity) {
+
         Scanner sc = new Scanner(System.in);
         LinkedList<String> tableValues = new LinkedList<>();
         String[][] table = createTable(capacity,pages);
-
+        String type = "FIFO";
         int page_faults = 0, victim_frames = 0;
+        String frame,victim;
 
-        for (int i = 0; i < pageLength; i++) {
+        table = printTable(table, capacity, pages, tableValues, 0, false, "");
+        printSummary(capacity,pages, type);
+        if(continueCheck(sc)) {
+            for (int i = 0; i < pageLength; i++) {
 
-            if (tableValues.size() < capacity) {
-                if (!tableValues.contains(String.valueOf(pages.charAt(i)))) {
-                    page_faults++;
-                    tableValues.addFirst(String.valueOf(pages.charAt(i)));
-                    table = printTable(table, capacity, pages, tableValues, i + 1, true, "");
-                }
-                else {
-                    table = printTable(table, capacity, pages, tableValues, i + 1, false, "");
-                }
-            } else {
-                if (!tableValues.contains((String.valueOf(pages.charAt(i))))) {
-                    victim_frames++;
-                    int val = Integer.parseInt(tableValues.getLast());
-                    tableValues.removeLast();
-                    tableValues.addFirst(String.valueOf(pages.charAt(i)));
-
-                    table = printTable(table, capacity, pages, tableValues, i + 1, true, String.valueOf(val));
-                    page_faults++;
+                if (tableValues.size() < capacity) {
+                    if (!tableValues.contains(String.valueOf(pages.charAt(i)))) {
+                        page_faults++;
+                        frame = String.valueOf(pages.charAt(i));
+                        tableValues.addFirst(frame);
+                        table = printTable(table, capacity, pages, tableValues, i + 1, true, "");
+                        printSummary(true, frame,"",capacity,type, tableValues.indexOf(frame));
+                    } else {
+                        frame = String.valueOf(pages.charAt(i));
+                        table = printTable(table, capacity, pages, tableValues, i + 1, false, "");
+                        printSummary(false, frame,"",capacity,type, tableValues.indexOf(frame));
+                    }
                 } else {
-                    table = printTable(table, capacity, pages, tableValues, i + 1, false, "");
+                    if (!tableValues.contains((String.valueOf(pages.charAt(i))))) {
+                        victim_frames++;
+                        frame = String.valueOf(pages.charAt(i));
+                        victim = String.valueOf(tableValues.getLast());
+                        tableValues.removeLast();
+                        tableValues.addFirst(frame);
+
+                        table = printTable(table, capacity, pages, tableValues, i + 1, true, victim);
+                        printSummary(true, frame,victim,capacity,type, tableValues.indexOf(frame));
+                        page_faults++;
+                    } else {
+                        frame = String.valueOf(pages.charAt(i));
+                        table = printTable(table, capacity, pages, tableValues, i + 1, false, "");
+                        printSummary(false, frame,"",capacity,type, tableValues.indexOf(frame));
+                    }
+                }
+
+                if (i == pageLength - 1)
+                    break;
+
+                if (!continueCheck(sc)) {
+                    break;
                 }
             }
 
-            if(i == pageLength - 1)
-                break;
-
-            if(!continueCheck(sc)){
-                break;
-            }
+            System.out.println("In the end, a total of " +page_faults+ " page faults and "+victim_frames+" victims were generated.");
         }
-
-        result[0] = String.valueOf(page_faults);
-        result[1] = String.valueOf(victim_frames);
-        return result;
     }
 
     private static String[] OPT(int[] pages, int pageLength, int capacity) {
