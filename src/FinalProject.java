@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -12,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class FinalProject {
     public static void main(String[] args) {
-        BufferedReader object = new BufferedReader(new InputStreamReader(System.in));
+        Scanner sc = new Scanner(System.in);
         int physicalFrames = 4;
         String results[];
         StringBuffer parsedPages = new StringBuffer();
@@ -20,7 +17,7 @@ public class FinalProject {
         //int pages[] = {4, 1, 2,	3, 5, 7, 8,	9, 4, 7, 0,	3, 6, 0, 5, 2, 8};
 
 
-        try {
+
             System.out.println("Please select from the below options: ");
             while (true) {
 
@@ -36,7 +33,7 @@ public class FinalProject {
                 System.out.println("\nChoose next option: ");
                 int opt = -1;
                 try {
-                   opt = Integer.parseInt(object.readLine());
+                   opt = sc.nextInt();
                 } catch (NumberFormatException ex){
                     System.out.println("Please enter a valid number.");
                 }
@@ -47,7 +44,7 @@ public class FinalProject {
                     case 1:
                         parsedPages.setLength(0);
                         System.out.println("Please enter the reference string. (No spaces or comma's needed, each character is a frame).");
-                        parsedPages.append(object.readLine());
+                        parsedPages.append(sc.next());
                         readInputs(parsedPages);
                         continue;
                     case 2:
@@ -61,7 +58,7 @@ public class FinalProject {
                         continue;
                     case 4:
                         if(parsedPages.length() != 0){
-                            FIFO(parsedPages,parsedPages.length(),physicalFrames);
+                            FIFO(parsedPages,parsedPages.length(),physicalFrames,sc);
                             System.out.println("FIFO Simulation complete \n");
                         }else {
                             System.out.println("Please enter a reference string via option 1 or 2.");
@@ -96,10 +93,8 @@ public class FinalProject {
                         }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-    }
+
 
 
     private static void readInputs(StringBuffer parsedPages){
@@ -211,9 +206,7 @@ public class FinalProject {
         }
 
     }
-    private static void FIFO(StringBuffer pages, int pageLength, int capacity) {
-
-        Scanner sc = new Scanner(System.in);
+    private static void FIFO(StringBuffer pages, int pageLength, int capacity, Scanner sc) {
         LinkedList<String> tableValues = new LinkedList<>();
         String[][] table = createTable(capacity,pages);
         String type = "FIFO";
@@ -224,23 +217,20 @@ public class FinalProject {
         printSummary(capacity,pages, type);
         if(continueCheck(sc)) {
             for (int i = 0; i < pageLength; i++) {
-
+                frame = String.valueOf(pages.charAt(i));
                 if (tableValues.size() < capacity) {
                     if (!tableValues.contains(String.valueOf(pages.charAt(i)))) {
                         page_faults++;
-                        frame = String.valueOf(pages.charAt(i));
                         tableValues.addFirst(frame);
                         table = printTable(table, capacity, pages, tableValues, i + 1, true, "");
                         printSummary(true, frame,"",capacity,type, tableValues.indexOf(frame));
                     } else {
-                        frame = String.valueOf(pages.charAt(i));
                         table = printTable(table, capacity, pages, tableValues, i + 1, false, "");
                         printSummary(false, frame,"",capacity,type, tableValues.indexOf(frame));
                     }
                 } else {
                     if (!tableValues.contains((String.valueOf(pages.charAt(i))))) {
                         victim_frames++;
-                        frame = String.valueOf(pages.charAt(i));
                         victim = String.valueOf(tableValues.getLast());
                         tableValues.removeLast();
                         tableValues.addFirst(frame);
@@ -249,7 +239,6 @@ public class FinalProject {
                         printSummary(true, frame,victim,capacity,type, tableValues.indexOf(frame));
                         page_faults++;
                     } else {
-                        frame = String.valueOf(pages.charAt(i));
                         table = printTable(table, capacity, pages, tableValues, i + 1, false, "");
                         printSummary(false, frame,"",capacity,type, tableValues.indexOf(frame));
                     }
