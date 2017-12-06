@@ -156,6 +156,28 @@ public class FinalProject {
         }
         return table;
     }
+    private static boolean continueCheck(Scanner sc){
+        boolean isContinuing = true;
+        boolean inputIsInvalid = true;
+        while (inputIsInvalid) {
+            System.out.print("Continue? (y/n): ");
+
+            String choice = sc.next();
+
+            if ("y".equalsIgnoreCase(choice)) {
+                inputIsInvalid = false;
+            }
+            else if ("n".equalsIgnoreCase(choice)) {
+                inputIsInvalid = false;
+                isContinuing = false;
+            }
+            else {
+                System.out.print("Error: Only valid answers are Y/N.\n");
+            }
+        }
+        return  isContinuing;
+    }
+
     private static String[] FIFO(StringBuffer pages, int pageLength, int capacity) {
         String result[] = new String[2];
         Scanner sc = new Scanner(System.in);
@@ -163,7 +185,6 @@ public class FinalProject {
         String[][] table = createTable(capacity,pages);
 
         int page_faults = 0, victim_frames = 0;
-        boolean isContinuing = true;
 
         for (int i = 0; i < pageLength; i++) {
 
@@ -193,24 +214,7 @@ public class FinalProject {
             if(i == pageLength - 1)
                 break;
 
-            boolean inputIsInvalid = true;
-            while (inputIsInvalid) {
-                System.out.print("Continue? (y/n): ");
-
-                String choice = sc.next();
-
-                if ("y".equalsIgnoreCase(choice)) {
-                    inputIsInvalid = false;
-                }
-                else if ("n".equalsIgnoreCase(choice)) {
-                    inputIsInvalid = false;
-                    isContinuing = false;
-                }
-                else {
-                    System.out.print("Error: Only valid answers are Y/N.\n");
-                }
-            }
-            if(!isContinuing){
+            if(!continueCheck(sc)){
                 break;
             }
         }
