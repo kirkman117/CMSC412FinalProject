@@ -1,5 +1,3 @@
-import sun.awt.image.ImageWatched;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,7 +34,12 @@ public class FinalProject {
                         + "7 - LFU Simulation");
 
                 System.out.println("\nChoose next option: ");
-                int opt = Integer.parseInt(object.readLine());
+                int opt = -1;
+                try {
+                   opt = Integer.parseInt(object.readLine());
+                } catch (NumberFormatException ex){
+                    System.out.println("Please enter a valid number.");
+                }
                 switch (opt) {
                     case 0:
                         System.exit(0);
@@ -54,7 +57,7 @@ public class FinalProject {
                         }
                         continue;
                     case 3:
-                        System.out.println(parsedPages.toString());
+                        printReferenceString(parsedPages);
                         continue;
                     case 4:
                         if(parsedPages.length() != 0){
@@ -101,7 +104,7 @@ public class FinalProject {
     }
 
 
-    static StringBuffer readInputs(StringBuffer parsedPages){
+    private static void readInputs(StringBuffer parsedPages){
         for (int i = 0; i < parsedPages.length(); i++) {
             if(!Character.isDigit(parsedPages.charAt(i))){
                 System.out.println("All characters must be a number, please try again.");
@@ -109,10 +112,17 @@ public class FinalProject {
                 break;
             }
         }
-
-        return parsedPages;
     }
-    static String[][] createTable(Integer capacity, StringBuffer pages){
+    private static void  printReferenceString(StringBuffer parsedPages){
+        for (int i = 0; i < parsedPages.length(); i++) {
+            if(i ==parsedPages.length() - 1){
+                System.out.print(parsedPages.charAt(i) + "\n");
+
+            }else
+                System.out.print(parsedPages.charAt(i)+ ", ");
+        }
+    }
+    private static String[][] createTable(Integer capacity, StringBuffer pages){
         String[][] table = new String[capacity + 3][pages.length() + 1];
         table[0][0] = "\nReference String";
         for(int i = 0; i < capacity; i ++){
@@ -125,8 +135,7 @@ public class FinalProject {
         }
         return table;
     }
-
-    static String[][] printTable(String[][] table, Integer capacity, StringBuffer pages, LinkedList<String> values, int position, boolean fault, String victim){
+    private static String[][] printTable(String[][] table, Integer capacity, StringBuffer pages, LinkedList<String> values, int position, boolean fault, String victim){
 
         for (int i = 0; i < values.size(); i++) {
             table[i + 1][position] = values.get(i);
@@ -147,8 +156,7 @@ public class FinalProject {
         }
         return table;
     }
-
-    static String[] FIFO(StringBuffer pages, int pageLength, int capacity) {
+    private static String[] FIFO(StringBuffer pages, int pageLength, int capacity) {
         String result[] = new String[2];
         Scanner sc = new Scanner(System.in);
         LinkedList<String> tableValues = new LinkedList<>();
@@ -200,7 +208,6 @@ public class FinalProject {
                 }
                 else {
                     System.out.print("Error: Only valid answers are Y/N.\n");
-
                 }
             }
             if(!isContinuing){
@@ -213,7 +220,7 @@ public class FinalProject {
         return result;
     }
 
-    static String[] OPT(int[] pages, int pageLength, int capacity) {
+    private static String[] OPT(int[] pages, int pageLength, int capacity) {
         String result[] = new String[2];
         LinkedList<Integer> frame = new LinkedList<>();
 
@@ -237,7 +244,7 @@ public class FinalProject {
         return result;
     }
 
-    static Integer OPTPredict(int[] pages, LinkedList<Integer> frame, int pageLength, int index) {
+    private static Integer OPTPredict(int[] pages, LinkedList<Integer> frame, int pageLength, int index) {
 
         int res = -1;
         int farthest = index;
@@ -259,7 +266,7 @@ public class FinalProject {
         return res;
     }
 
-    static String[] LRU(int pages[], int pageLength, int capacity) {
+    private static String[] LRU(int pages[], int pageLength, int capacity) {
         String[] results = new String[2];
         int page_faults = 0;
         int victim_frames = 0;
@@ -295,7 +302,7 @@ public class FinalProject {
         return results;
     }
 
-    static String[] LFU(int pages[], int pageLength, int capacity) {
+    private static String[] LFU(int pages[], int pageLength, int capacity) {
         String[] results = new String[2];
         int page_faults = 0, victim_frames = 0;
 
