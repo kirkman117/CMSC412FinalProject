@@ -75,9 +75,7 @@ public class FinalProject {
                         continue;
                     case 6:
                         if(parsedPages.length() != 0){
-                            results = LRU(pages, pages.length, physicalFrames);
-                            System.out.println("LRU Page faults: " + results[0]);
-                            System.out.println("LRU Victim Frames: " + results[1]);
+                            LRU.LRUAlgorithim(parsedPages, parsedPages.length(), physicalFrames,sc);
                         }else {
                             System.out.println("Please enter a reference string via option 1 or 2.");
                         }
@@ -138,63 +136,27 @@ public class FinalProject {
 
 
 
-    private static String[] LRU(int pages[], int pageLength, int capacity) {
-        String[] results = new String[2];
-        int page_faults = 0;
-        int victim_frames = 0;
-
-        LinkedList<Integer> frames = new LinkedList<>();
-        HashMap<Integer, Integer> indexes = new HashMap<>();
-        for (int i = 0; i < pageLength; i++) {
-            if (frames.size() < capacity) {
-                if (!frames.contains(pages[i])) {
-                    frames.add(pages[i]);
-                    page_faults++;
-                }
-                indexes.put(pages[i], i);
-            } else {
-                if (!frames.contains(pages[i])) {
-                    int maxValue = Integer.MAX_VALUE, minValue = Integer.MIN_VALUE;
-
-                    for (Integer temp : frames) {
-                        if (indexes.get(temp) < maxValue) {
-                            maxValue = indexes.get(temp);
-                            minValue = temp;
-                        }
-                    }
-                    frames.set(frames.indexOf(minValue), pages[i]);
-                    page_faults++;
-                    victim_frames++;
-                }
-                indexes.put(pages[i], i);
-            }
-        }
-        results[0] = String.valueOf(page_faults);
-        results[1] = String.valueOf(victim_frames);
-        return results;
-    }
-
     private static String[] LFU(int pages[], int pageLength, int capacity) {
         String[] results = new String[2];
         int page_faults = 0, victim_frames = 0;
 
 
-        LinkedList<Integer> frames = new LinkedList<>();
+        LinkedList<Integer> physicalFrames = new LinkedList<>();
         HashMap<Integer, Integer> indexes = new HashMap<>();
 
         for (int i = 0; i < pageLength; i++) {
-            if (frames.size() < capacity) {
-                if (!frames.contains(pages[i])) {
-                    frames.add(pages[i]);
+            if (physicalFrames.size() < capacity) {
+                if (!physicalFrames.contains(pages[i])) {
+                    physicalFrames.add(pages[i]);
                     page_faults++;
                 }
                 int count = 0;
                 count++;
                 indexes.put(pages[i], count);
-            } else if (!frames.contains(pages[i])) {
+            } else if (!physicalFrames.contains(pages[i])) {
                 int compare = 0, remove = 0;
-                for (int j = 0; j < frames.size(); j++) {
-                    int test = indexes.get(frames.get(j));
+                for (int j = 0; j < physicalFrames.size(); j++) {
+                    int test = indexes.get(physicalFrames.get(j));
                     if (compare == 0) {
                         compare = test;
                         remove = j;
@@ -212,7 +174,7 @@ public class FinalProject {
                     indexes.put(pages[i], count);
                 }
 
-                frames.set(remove, pages[i]);
+                physicalFrames.set(remove, pages[i]);
                 page_faults++;
                 victim_frames++;
             } else {
