@@ -6,14 +6,18 @@ simulations in the reading, and will also print out the different algorithms in 
 be prompted with several options, and when in a simulation will be prompted to continue or exit.
 
 
-#Driver Class 
-FinalProject.java  
-#Algorithm Classes
+**Driver Class**  
+FinalProject.java
+
+  
+**Algorithm Classes**  
 Fifo.java  
 OPT.java  
 LRU.java  
-LFU.java
-#Utility Classes
+LFU.java  
+
+
+**Utility Classes**  
 outputTable.java  
 printClass.java  
 HelperClass.java 
