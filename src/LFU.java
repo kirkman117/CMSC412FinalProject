@@ -5,31 +5,41 @@ import java.util.Scanner;
 /**
  * Project: CMSC412FinalProject
  * Created by David on 12/6/2017.
- * Objective:
+ * Objective: This program handles the LFU algorithm and calls the Helper, outputTable, and printClass classes
  */
 public class LFU {
 
-    public static void LFUAlgorithim(StringBuffer pages, int pageLength, int capacity, Scanner sc) {
+    public static void LFUAlgorithim(StringBuffer referenceString, int referenceStringLength, int capacity, Scanner sc) {
         int page_faults = 0, victim_frames = 0;
-        String[][] table = outputTable.createTable(capacity, pages);
+        //Calls the outputTable class to create a "table" view
+        String[][] table = outputTable.createTable(capacity, referenceString);
         String frames, victim, type = "LFU";
 
+        //The linked list holds the information for the physical frames
         LinkedList<String> physicalFrames = new LinkedList<>();
+        //Hash is to keep a count of the each value in the reference string and how many times used
         HashMap<String, Integer> indexes = new HashMap<>();
 
-        table = outputTable.printTable(table, capacity, pages, physicalFrames, 0, false, "");
-        printClass.printSummary(capacity, pages, type);
+        //Calls the table to display, and passes in the faults and victims.
+        table = outputTable.printTable(table, capacity, referenceString, physicalFrames, 0, false, "");
+        printClass.printSummary(capacity, referenceString, type);
 
-        if (FinalProject.continueCheck(sc)) {
-            for (int i = 0; i < pageLength; i++) {
-                frames = String.valueOf(pages.charAt(i));
+        //Prompts the user to continue or quit the simulation at the start
+        if (HelperClass.continueCheck(sc)) {
+            for (int i = 0; i < referenceStringLength; i++) {
+                frames = String.valueOf(referenceString.charAt(i));
+                //Does a check in the beginning to see if the value is in the physical frame
                 if (!physicalFrames.contains(frames)) {
+                    //Checks to see if there is room in the frames, if so it enters without a victim
                     if (physicalFrames.size() < capacity) {
                         physicalFrames.add(frames);
                         page_faults++;
-                        table = outputTable.printTable(table, capacity, pages, physicalFrames, i + 1, true, "");
+
+                        //updates the table and prints out the summary.
+                        table = outputTable.printTable(table, capacity, referenceString, physicalFrames, i + 1, true, "");
                         printClass.printSummary(true, frames, "", capacity, type, physicalFrames.indexOf(frames));
                     } else {
+                        //Compare the values using the hash to see how many times ued
                         int compare = 0, remove = 0;
                         for (int j = 0; j < physicalFrames.size(); j++) {
                             int test = indexes.get(physicalFrames.get(j));
@@ -47,13 +57,17 @@ public class LFU {
                         physicalFrames.set(remove, frames);
                         page_faults++;
                         victim_frames++;
-                        table = outputTable.printTable(table, capacity, pages, physicalFrames, i + 1, true, victim);
+                        //Passes fault, the victim and the frame being added to the table
+                        table = outputTable.printTable(table, capacity, referenceString, physicalFrames, i + 1, true, victim);
                         printClass.printSummary(true, frames, victim, capacity, type, physicalFrames.indexOf(frames));
                     }
                 } else {
-                    table = outputTable.printTable(table, capacity, pages, physicalFrames, i + 1, false, "");
+                    //If value is already in the physical frames, prints out the table without fault
+                    table = outputTable.printTable(table, capacity, referenceString, physicalFrames, i + 1, false, "");
                     printClass.printSummary(false, frames, "", capacity, type, physicalFrames.indexOf(frames));
                 }
+
+                //This is an if check to increment or add the value so the count can be kept
                 if (indexes.containsKey(frames)) {
                     indexes.put(frames, indexes.get(frames) + 1);
                 } else {
@@ -61,10 +75,12 @@ public class LFU {
                     count++;
                     indexes.put(frames, count);
                 }
-                if (i == pageLength - 1)
+                //Even though in a loop, added this to exit out before the prompt to continue when at the end
+                if (i == referenceStringLength - 1)
                     break;
 
-                if (!FinalProject.continueCheck(sc)) {
+                //Prompts to continue
+                if (!HelperClass.continueCheck(sc)) {
                     break;
                 }
 

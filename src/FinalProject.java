@@ -4,131 +4,109 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Project: CMSC412FinalProject
- * Created by David on 11/27/2017.
- * Objective:
+ * Created by David on 12/4/2017.
+ * Objective: This file is specifically used as the driver for the project.  Each algorithm is a different class.
  */
 public class FinalProject {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int physicalFrames = 4;
-        String results[];
-        StringBuffer parsedPages = new StringBuffer();
-        int pages[] = {1, 7, 5, 4, 0, 1, 4, 7, 3, 6, 5, 0, 4, 7, 3, 2, 1};
+        StringBuffer referenceString = new StringBuffer();
 
-            System.out.println("Please select from the below options: ");
-            while (true) {
+        System.out.println("Please select from the below options: ");
+        while (true) {
 
-                System.out.println("0 - Exit \n"
-                        + "1 - Read Reference String \n"
-                        + "2 - Generate Reference String \n"
-                        + "3 - Display current reference string \n"
-                        + "4 - FIFO Simulation \n"
-                        + "5 - OPT Simulation \n"
-                        + "6 - LRU Simulation \n"
-                        + "7 - LFU Simulation");
+            System.out.println("0 - Exit \n"
+                    + "1 - Read Reference String \n"
+                    + "2 - Generate Reference String \n"
+                    + "3 - Display current reference string \n"
+                    + "4 - FIFO Simulation \n"
+                    + "5 - OPT Simulation \n"
+                    + "6 - LRU Simulation \n"
+                    + "7 - LFU Simulation");
 
-                System.out.println("\nChoose next option: ");
-                int opt = -1;
-                try {
-                   opt = sc.nextInt();
-                } catch (NumberFormatException ex){
-                    System.out.println("Please enter a valid number.");
-                }
-                switch (opt) {
-                    case 0:
-                        System.exit(0);
-                        break;
-                    case 1:
-                        parsedPages.setLength(0);
-                        System.out.println("Please enter the reference string. (No spaces or comma's needed, each character is a frame).");
-                        parsedPages.append(sc.next());
-                        readInputs(parsedPages);
-                        continue;
-                    case 2:
-                        parsedPages.setLength(0);
-                        for (int i = 0; i < 10; i++) {
-                            parsedPages.append(ThreadLocalRandom.current().nextInt(0, 10));
-                        }
-                        continue;
-                    case 3:
-                        printReferenceString(parsedPages);
-                        continue;
-                    case 4:
-                        if(parsedPages.length() != 0){
-                            FIFO.FIFOAlgorithm(parsedPages,parsedPages.length(),physicalFrames,sc);
-                            System.out.println("FIFO Simulation complete \n");
-                        }else {
-                            System.out.println("Please enter a reference string via option 1 or 2.");
-                        }
+            System.out.println("\nChoose next option: ");
+            int opt = -1;
 
-                        continue;
-                    case 5:
-                        if(parsedPages.length() != 0){
-                            OPT.OPTAlgorithm(parsedPages, parsedPages.length(), physicalFrames, sc);
-                            System.out.println("OPT Simulation complete \n");
-                        }else {
-                            System.out.println("Please enter a reference string via option 1 or 2.");
-                        }
-                        continue;
-                    case 6:
-                        if(parsedPages.length() != 0){
-                            LRU.LRUAlgorithim(parsedPages, parsedPages.length(), physicalFrames,sc);
-                            System.out.println("LRU Simulation complete \n");
-                        }else {
-                            System.out.println("Please enter a reference string via option 1 or 2.");
-                        }
-                        continue;
-                    case 7:
-                        if(parsedPages.length() != 0){
-                            LFU.LFUAlgorithim(parsedPages, parsedPages.length(), physicalFrames, sc);
-                            System.out.println("LFU Simulation complete \n");
-                        }else {
-                            System.out.println("Please enter a reference string via option 1 or 2.");
-                        }
-                }
+            //Check to make sure the menu selection is an Int
+            try {opt = sc.nextInt();}
+            catch (InputMismatchException ex) {
+                System.out.println("Please enter a valid number.");
+                sc.next();
             }
-        }
 
+            //Loop will continue until 0 is selected.
+            switch (opt) {
+                case 0:
+                    System.exit(0);
+                    break;
+                case 1:
+                    referenceString.setLength(0);
+                    System.out.println("Please enter the reference string. (No spaces or comma's needed, each character is a frame).");
+                    //Since each char is the value no entry can be greater than 10
+                    referenceString.append(sc.next());
+                    //Calls Helper to make sure each char is a digit
+                    HelperClass.readInputs(referenceString);
+                    System.out.print("Would you like to set the amount of physical frames, by default it is 4.");
+                    //Uses the helper class to make sure to make sure that the next entry is a Y/N, and if if yes will allow user to change default
+                    if (HelperClass.continueCheck(sc)) {
+                        physicalFrames = HelperClass.setFrame(sc);
+                    }
+                    continue;
+                case 2:
+                    //Sets the reference string to random values
+                    referenceString.setLength(0);
+                    for (int i = 0; i < 17; i++) {
+                        referenceString.append(ThreadLocalRandom.current().nextInt(0, 10));
+                    }
+                    continue;
+                //From here the following cases all make sure you have a reference string otherwise an error is displayed
+                case 3:
+                    if (referenceString.length() != 0) {
+                        //Calls helper to print out reference
+                        HelperClass.printReferenceString(referenceString);
+                    }else {
+                        System.out.println("Please enter a reference string via option 1 or 2.");
+                    }
+                    continue;
 
+                case 4:
+                    if (referenceString.length() != 0) {
+                        //Calls the FIFO class to perform algorithm
+                        FIFO.FIFOAlgorithm(referenceString, referenceString.length(), physicalFrames, sc);
+                        System.out.println("FIFO Simulation complete \n");
+                    } else {
+                        System.out.println("Please enter a reference string via option 1 or 2.");
+                    }
 
-    private static void readInputs(StringBuffer parsedPages){
-        for (int i = 0; i < parsedPages.length(); i++) {
-            if(!Character.isDigit(parsedPages.charAt(i))){
-                System.out.println("All characters must be a number, please try again.");
-                parsedPages.setLength(0);
-                break;
+                    continue;
+                case 5:
+                    if (referenceString.length() != 0) {
+                        //Calls the OPT class to perform algorithm
+                        OPT.OPTAlgorithm(referenceString, referenceString.length(), physicalFrames, sc);
+                        System.out.println("OPT Simulation complete \n");
+                    } else {
+                        System.out.println("Please enter a reference string via option 1 or 2.");
+                    }
+                    continue;
+                case 6:
+                    if (referenceString.length() != 0) {
+                        //Calls the LRU class to perform algorithm
+                        LRU.LRUAlgorithim(referenceString, referenceString.length(), physicalFrames, sc);
+                        System.out.println("LRU Simulation complete \n");
+                    } else {
+                        System.out.println("Please enter a reference string via option 1 or 2.");
+                    }
+                    continue;
+                case 7:
+                    if (referenceString.length() != 0) {
+                        //Calls the LFU class to perform algorithm
+                        LFU.LFUAlgorithim(referenceString, referenceString.length(), physicalFrames, sc);
+                        System.out.println("LFU Simulation complete \n");
+                    } else {
+                        System.out.println("Please enter a reference string via option 1 or 2.");
+                    }
             }
         }
     }
-    public static void  printReferenceString(StringBuffer parsedPages){
-        for (int i = 0; i < parsedPages.length(); i++) {
-            if(i == parsedPages.length() - 1){
-                System.out.print(parsedPages.charAt(i) + "\n\n");
-
-            }else
-                System.out.print(parsedPages.charAt(i)+ ", ");
-        }
-    }
-    public static boolean continueCheck(Scanner sc){
-        boolean isContinuing = true;
-        boolean inputIsInvalid = true;
-        while (inputIsInvalid) {
-            System.out.print("Continue? (y/n): ");
-
-            String choice = sc.next();
-
-            if ("y".equalsIgnoreCase(choice)) {
-                inputIsInvalid = false;
-            }
-            else if ("n".equalsIgnoreCase(choice)) {
-                inputIsInvalid = false;
-                isContinuing = false;
-            }
-            else {
-                System.out.print("Error: Only valid answers are Y/N.\n");
-            }
-        }
-        return  isContinuing;
-    }
-
 }
