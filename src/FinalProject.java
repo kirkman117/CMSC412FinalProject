@@ -14,9 +14,6 @@ public class FinalProject {
         String results[];
         StringBuffer parsedPages = new StringBuffer();
         int pages[] = {1, 7, 5, 4, 0, 1, 4, 7, 3, 6, 5, 0, 4, 7, 3, 2, 1};
-        //int pages[] = {4, 1, 2,	3, 5, 7, 8,	9, 4, 7, 0,	3, 6, 0, 5, 2, 8};
-
-
 
             System.out.println("Please select from the below options: ");
             while (true) {
@@ -76,15 +73,15 @@ public class FinalProject {
                     case 6:
                         if(parsedPages.length() != 0){
                             LRU.LRUAlgorithim(parsedPages, parsedPages.length(), physicalFrames,sc);
+                            System.out.println("LRU Simulation complete \n");
                         }else {
                             System.out.println("Please enter a reference string via option 1 or 2.");
                         }
                         continue;
                     case 7:
                         if(parsedPages.length() != 0){
-                            results = LFU(pages, pages.length, physicalFrames);
-                            System.out.println("LFU Page faults: " + results[0]);
-                            System.out.println("LFU Victim Frames: " + results[1]);
+                            LFU.LFUAlgorithim(parsedPages, parsedPages.length(), physicalFrames, sc);
+                            System.out.println("LFU Simulation complete \n");
                         }else {
                             System.out.println("Please enter a reference string via option 1 or 2.");
                         }
@@ -134,57 +131,4 @@ public class FinalProject {
         return  isContinuing;
     }
 
-
-
-    private static String[] LFU(int pages[], int pageLength, int capacity) {
-        String[] results = new String[2];
-        int page_faults = 0, victim_frames = 0;
-
-
-        LinkedList<Integer> physicalFrames = new LinkedList<>();
-        HashMap<Integer, Integer> indexes = new HashMap<>();
-
-        for (int i = 0; i < pageLength; i++) {
-            if (physicalFrames.size() < capacity) {
-                if (!physicalFrames.contains(pages[i])) {
-                    physicalFrames.add(pages[i]);
-                    page_faults++;
-                }
-                int count = 0;
-                count++;
-                indexes.put(pages[i], count);
-            } else if (!physicalFrames.contains(pages[i])) {
-                int compare = 0, remove = 0;
-                for (int j = 0; j < physicalFrames.size(); j++) {
-                    int test = indexes.get(physicalFrames.get(j));
-                    if (compare == 0) {
-                        compare = test;
-                        remove = j;
-                    }
-                    if (test < compare) {
-                        compare = test;
-                        remove = j;
-                    }
-                }
-                int count = 0;
-                count++;
-                if (indexes.containsKey(pages[i])) {
-                    indexes.put(pages[i], indexes.get(pages[i]) + 1);
-                } else {
-                    indexes.put(pages[i], count);
-                }
-
-                physicalFrames.set(remove, pages[i]);
-                page_faults++;
-                victim_frames++;
-            } else {
-                indexes.put(pages[i], indexes.get(pages[i]) + 1);
-            }
-        }
-
-        results[0] = String.valueOf(page_faults);
-        results[1] = String.valueOf(victim_frames);
-
-        return results;
-    }
 }

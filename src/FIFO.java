@@ -48,7 +48,7 @@ public class FIFO {
                 }
             }
 
-            System.out.println("In the end, a total of " +page_faults+ " page faults and "+victim_frames+" victims were generated.");
+            System.out.println("In the end, a total of " +page_faults+ " page faults and "+victim_frames+" victims were generated.\n");
         }
     }
 }
