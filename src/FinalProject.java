@@ -52,7 +52,7 @@ public class FinalProject {
                     referenceString = (HelperClass.checkForDelimiter(placeHolder,referenceString));
 
                     if (referenceString.length() > 0){
-                        System.out.print("Would you like to set the amount of physical frames, by default it is 4.");
+                        System.out.println("Would you like to set the amount of physical frames, by default it is 4.");
                         //Uses the helper class to make sure to make sure that the next entry is a Y/N, and if if yes will allow user to change default
                         if (HelperClass.continueCheck(sc)) {
                             physicalFrames = HelperClass.setFrame(sc);
