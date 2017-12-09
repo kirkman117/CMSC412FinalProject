@@ -8,7 +8,7 @@ import java.util.Scanner;
  */
 public class HelperClass {
     //Ensures that each character is a digit
-    public static void readInputs(StringBuffer parsedPages) {
+    private static void readInputs(StringBuffer parsedPages) {
         for (int i = 0; i < parsedPages.length(); i++) {
             if (!Character.isDigit(parsedPages.charAt(i))) {
                 System.out.println("All characters must be a number, please try again.");
@@ -34,7 +34,7 @@ public class HelperClass {
         boolean isContinuing = true;
         boolean inputIsInvalid = true;
         while (inputIsInvalid) {
-            System.out.print("Continue? (y/n): ");
+            System.out.println("Continue? (y/n): ");
 
             String choice = sc.next();
 
@@ -67,5 +67,37 @@ public class HelperClass {
             }
         }
         return numberOfFrames;
+    }
+
+    //Checks to see if a delimiter is used, and handles correctly
+    public static StringBuffer checkForDelimiter(String referenceString, StringBuffer bufferedReferenceString){
+        String[] splitReferenceString;
+        //Removes any spaces
+        referenceString = referenceString.replace(" ","");
+        //Using the delimiter as a comma, otherwise it will go into the readInputs method to make sure each character
+        //entered is an int (will also handle incorrect delimiters.)
+        if(referenceString.contains(",")){
+            splitReferenceString = referenceString.split(",");
+            for (String aSplitReferenceString : splitReferenceString) {
+                try {
+                    Integer referenceStringItem = Integer.parseInt(aSplitReferenceString);
+                    if (referenceStringItem < 0 || referenceStringItem > 9) {
+                        System.out.println("All values must be between 0 and 9, please try again.");
+                        bufferedReferenceString.setLength(0);
+                        break;
+                    } else
+                        bufferedReferenceString.append(referenceStringItem);
+                } catch (NumberFormatException ex) {
+                    System.out.println("All values must be integers between 0 and 9, please try again.");
+                    bufferedReferenceString.setLength(0);
+                    break;
+                }
+            }
+        }else{
+            //Calls this to make sure every character is an integer
+            readInputs(bufferedReferenceString.append(referenceString));
+        }
+
+        return  bufferedReferenceString;
     }
 }

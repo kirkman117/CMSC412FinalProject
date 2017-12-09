@@ -32,7 +32,7 @@ public class FinalProject {
             try {opt = sc.nextInt();}
             catch (InputMismatchException ex) {
                 System.out.println("Please enter a valid number.");
-                sc.next();
+                sc.nextLine();
             }
 
             //Loop will continue until 0 is selected.
@@ -42,15 +42,21 @@ public class FinalProject {
                     break;
                 case 1:
                     referenceString.setLength(0);
-                    System.out.println("Please enter the reference string. (No spaces or comma's needed, each character is a frame).");
-                    //Since each char is the value no entry can be greater than 10
-                    referenceString.append(sc.next());
-                    //Calls Helper to make sure each char is a digit
-                    HelperClass.readInputs(referenceString);
-                    System.out.print("Would you like to set the amount of physical frames, by default it is 4.");
-                    //Uses the helper class to make sure to make sure that the next entry is a Y/N, and if if yes will allow user to change default
-                    if (HelperClass.continueCheck(sc)) {
-                        physicalFrames = HelperClass.setFrame(sc);
+                    //Clearing the token to make sure handling comma's and spaces correctly
+                    sc.nextLine();
+                    System.out.println("Please enter the reference string.");
+                    System.out.println("You can enter in the string as just a row of numbers, or delimited by commas.");
+
+                    String placeHolder = sc.nextLine();
+                    //Calls the checkForDelimiter method to see if a delimiter is used
+                    referenceString = (HelperClass.checkForDelimiter(placeHolder,referenceString));
+
+                    if (referenceString.length() > 0){
+                        System.out.print("Would you like to set the amount of physical frames, by default it is 4.");
+                        //Uses the helper class to make sure to make sure that the next entry is a Y/N, and if if yes will allow user to change default
+                        if (HelperClass.continueCheck(sc)) {
+                            physicalFrames = HelperClass.setFrame(sc);
+                        }
                     }
                     continue;
                 case 2:
