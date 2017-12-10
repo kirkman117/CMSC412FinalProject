@@ -39,7 +39,7 @@ public class printClass {
         HelperClass.printReferenceString(frames);
     }
 
-    //Depdening on if there are faults, victims or neither, will print out the different statements from Module 3
+    //Depdending on if there are faults, victims or neither, will print out the different statements from Module 3
     public static void printSummary(boolean fault, String frame, String victim, int capacity, String type, int frameLocation) {
         switch (type) {
             case "FIFO":
@@ -108,7 +108,7 @@ public class printClass {
                             + "Virtual frame " + victim + " is swapped out, and virtual frame " + frame + " is swapped in.\n");
                 } else if (fault) {
                     System.out.println("\nVirtual frame " + frame + " is referenced. \n"
-                            + "ecause virtual frame " + frame + " is not present in physical memory, a page fault is generated.\n"
+                            + "because virtual frame " + frame + " is not present in physical memory, a page fault is generated.\n"
                             + "Virtual frame " + frame + " is loaded into physical frame " + frameLocation + ".\n"
                             + "Because there was room in the physical memory, we have no victim frame.\n");
                 } else {

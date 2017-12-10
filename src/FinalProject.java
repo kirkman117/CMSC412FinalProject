@@ -65,54 +65,55 @@ public class FinalProject {
                     for (int i = 0; i < 17; i++) {
                         referenceString.append(ThreadLocalRandom.current().nextInt(0, 10));
                     }
+                    physicalFrames = 4;
                     continue;
                 //From here the following cases all make sure you have a reference string otherwise an error is displayed
+                //It is passed to the runProgram method to ensure that there is no repeat code with the error message displayed
                 case 3:
-                    if (referenceString.length() != 0) {
-                        //Calls helper to print out reference
-                        HelperClass.printReferenceString(referenceString);
-                    }else {
-                        System.out.println("Please enter a reference string via option 1 or 2.");
-                    }
+                    runProgram(referenceString,"Print",physicalFrames,sc);
                     continue;
-
                 case 4:
-                    if (referenceString.length() != 0) {
-                        //Calls the FIFO class to perform algorithm
-                        FIFO.FIFOAlgorithm(referenceString, referenceString.length(), physicalFrames, sc);
-                        System.out.println("FIFO Simulation complete \n");
-                    } else {
-                        System.out.println("Please enter a reference string via option 1 or 2.");
-                    }
-
+                    runProgram(referenceString,"FIFO",physicalFrames,sc);
                     continue;
                 case 5:
-                    if (referenceString.length() != 0) {
-                        //Calls the OPT class to perform algorithm
-                        OPT.OPTAlgorithm(referenceString, referenceString.length(), physicalFrames, sc);
-                        System.out.println("OPT Simulation complete \n");
-                    } else {
-                        System.out.println("Please enter a reference string via option 1 or 2.");
-                    }
+                    runProgram(referenceString,"OPT",physicalFrames,sc);
                     continue;
                 case 6:
-                    if (referenceString.length() != 0) {
-                        //Calls the LRU class to perform algorithm
-                        LRU.LRUAlgorithim(referenceString, referenceString.length(), physicalFrames, sc);
-                        System.out.println("LRU Simulation complete \n");
-                    } else {
-                        System.out.println("Please enter a reference string via option 1 or 2.");
-                    }
+                    runProgram(referenceString,"LRU",physicalFrames,sc);
                     continue;
                 case 7:
-                    if (referenceString.length() != 0) {
-                        //Calls the LFU class to perform algorithm
-                        LFU.LFUAlgorithim(referenceString, referenceString.length(), physicalFrames, sc);
-                        System.out.println("LFU Simulation complete \n");
-                    } else {
-                        System.out.println("Please enter a reference string via option 1 or 2.");
-                    }
+                    runProgram(referenceString,"LFU",physicalFrames,sc);
             }
+        }
+    }
+
+    private static void runProgram(StringBuffer referenceString, String type,int physicalFrames, Scanner sc){
+        if(referenceString.length() > 0){
+            switch (type){
+                case "Print":
+                    HelperClass.printReferenceString(referenceString);
+                    break;
+                case "FIFO":
+                    //Calls the FIFO class to perform algorithm
+                    FIFO.FIFOAlgorithm(referenceString, referenceString.length(), physicalFrames, sc);
+                    break;
+                case "OPT":
+                    //Calls the OPT class to perform algorithm
+                    OPT.OPTAlgorithm(referenceString, referenceString.length(), physicalFrames, sc);
+                    break;
+                case "LFU":
+                    //Calls the LRU class to perform algorithm
+                    LRU.LRUAlgorithim(referenceString, referenceString.length(), physicalFrames, sc);
+                    break;
+                case "LRU":
+                    //Calls the LFU class to perform algorithm
+                    LFU.LFUAlgorithim(referenceString, referenceString.length(), physicalFrames, sc);
+                    break;
+            }
+            if(!type.equals("Print"))
+                System.out.println(type + " Simulation complete. \n");
+        }else {
+            System.out.println("Please enter a reference string via option 1 or 2.");
         }
     }
 }

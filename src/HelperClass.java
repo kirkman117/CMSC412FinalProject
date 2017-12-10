@@ -34,7 +34,7 @@ public class HelperClass {
         boolean isContinuing = true;
         boolean inputIsInvalid = true;
         while (inputIsInvalid) {
-            System.out.println("Continue? (y/n): ");
+            System.out.println("Continue? ( Y / N ): ");
 
             String choice = sc.next();
 
@@ -44,7 +44,7 @@ public class HelperClass {
                 inputIsInvalid = false;
                 isContinuing = false;
             } else {
-                System.out.print("Error: Only valid answers are Y/N.\n");
+                System.out.print("Error: Only valid answers are Y / N.\n");
             }
         }
         return isContinuing;
